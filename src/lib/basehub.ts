@@ -45,7 +45,12 @@ export async function getStoryBySlug(slug: string): Promise<Story | null> {
     const data = await basehub().query({
       stories: {
         __args: {
-          first: 100,
+          filter: {
+            _slug: {
+              eq: slug
+            }
+          },
+          first: 1,
         },
         items: {
           _id: true,
@@ -68,11 +73,9 @@ export async function getStoryBySlug(slug: string): Promise<Story | null> {
       },
     })
 
-    // Find the story with matching slug
-    const story = data.stories.items.find((item: Pick<Story, '_slug'>) => item._slug === slug)
-    return story ? story as Story : null
+    return data.stories.items[0] ? data.stories.items[0] as Story : null
   } catch (error) {
     console.error('Error fetching story from Basehub:', error)
     return null
   }
-} 
+}   
